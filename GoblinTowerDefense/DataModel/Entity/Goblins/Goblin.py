@@ -1,15 +1,14 @@
-import pygame
 import math
 from DataModel.Entity.Entity import Entity
 from DataModel.GameCourse.GameCourse import GameCourse
 
 
-class goblin(Entity):
+class Goblin(Entity):
     size = (50, 50)
     img_file = "icons/characters/goblin.png"
 
     def __init__(self, pos):
-        super().__init__(pos, goblin.size, goblin.img_file)
+        super().__init__(pos, Goblin.size, Goblin.img_file)
         self.speed = 5
         self.health = 5
         self.defense = 0
@@ -17,6 +16,7 @@ class goblin(Entity):
         self.point_to_move = GameCourse.move_points.copy()
 
     def update(self):
+        # Moving the goblins to the coordinates designed in GameCourse
         if len(self.point_to_move) > 0:
             diff_x = self.point_to_move[0][0] - self.rect.x
             diff_y = self.point_to_move[0][1] - self.rect.y

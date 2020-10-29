@@ -1,7 +1,7 @@
 import pygame
 
 
-class icon(pygame.sprite.Sprite):
+class Icon(pygame.sprite.Sprite):
     def __init__(self, img_file, img_idx, x, y, size):
         super().__init__()
         self.image = pygame.image.load(img_file)

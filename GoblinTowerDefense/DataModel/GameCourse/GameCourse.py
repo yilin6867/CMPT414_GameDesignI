@@ -1,15 +1,12 @@
 import pygame
 from DataModel.GameCourse.Road import Road
 
-
-# ----- Declare colors
-
-
 class GameCourse:
     pos = (0, 0)
     size = (700, 500)
     road_width = 60
     roadsDef = (
+        # (x, y, width, height)
         (500, 0, road_width, 100),  # road block 0
         (390, 100, 170, road_width),  # road block 1
         (330, 0, road_width, 160),  # road block 2
@@ -41,3 +38,11 @@ class GameCourse:
 
     def render(self):
         self.roads.draw(self.screen)
+
+    def occupy(self, mouse_pos):
+        for road in GameCourse.roadsDef:
+            if (mouse_pos[0] > road[0] and mouse_pos[0] < road[0] + road[2]) \
+                    and (mouse_pos[1] > road[1] and mouse_pos[1] < road[1] + road[3]):
+                print("occupied")
+                return True
+        return False

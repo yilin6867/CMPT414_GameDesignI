@@ -1,104 +1,171 @@
 import pygame
-#from data_model.Player.player import player
+from DataModel.Color import Color
 from DataModel.Entity.Characters.Character import Character
 from DataModel.Entity.Characters.GoblinSlayer import GoblinSlayer
-from DataModel.FeedbackSystem.Icon import icon
+from DataModel.FeedbackSystem.Icon import Icon
+from DataModel.FeedbackSystem.Button import Button
 
-BLACK=(0, 0, 0)
+pygame.font.init()
+font = pygame.font.SysFont("serif", 14)
 
-class feedback_system(pygame.sprite.Sprite):
+
+class FeedbackSystem(pygame.sprite.Sprite):
     framework_size = [120, 480]
     framework_pos = [570, 10]
     icon_size = 60
     icon_characters = [GoblinSlayer]
+    line_space = 5
+    section_space = 10
 
     def __init__(self, scrn, player):
         super().__init__()
         self.screen = scrn
-        self.image = pygame.Surface(feedback_system.framework_size)
+        self.image = pygame.Surface(FeedbackSystem.framework_size)
         self.image.set_alpha(128)
-        self.image.fill((128, 128, 128))
+        self.image.fill(Color.GRAY)
         self.rect = self.image.get_rect()
-        self.rect.x = feedback_system.framework_pos[0]
-        self.rect.y = feedback_system.framework_pos[1]
+        self.rect.x = FeedbackSystem.framework_pos[0]
+        self.rect.y = FeedbackSystem.framework_pos[1]
         self.rect.width = 1
         self.chara_icons = pygame.sprite.Group()
+        self.buttons = pygame.sprite.Group()
         self.icon_list = []
         self.player = player
         self.player_name = player.name
         self.budget = player.budget
         self.game_lvl = player.game_lvl
         self.health = player.health
-        self.next_y_pos = feedback_system.framework_pos[1]
-        self.next_x_pos = feedback_system.framework_pos[0]
-        self.draw_text()
+        self.next_y_pos = FeedbackSystem.framework_pos[1]
+        self.next_x_pos = FeedbackSystem.framework_pos[0]
+        self.draw_player_info()
+        self.init_buttons()
         self.init_chara_icons()
+        self.clicked_chara = None
+        self.cancel_btn_info = []
 
     def update(self):
+        # Update player information being display
         self.budget = self.player.budget
         self.game_lvl = self.player.game_lvl
         self.health = self.player.health
 
+    def chara_info_text(self, chara):
+        # Render the character information if a character is being clicked
+
+        chara_info_pos_y = FeedbackSystem.framework_pos[1] + FeedbackSystem.framework_size[1]
+        cancel_text = font.render("Release", True, Color.RED)
+        atk_range_text = font.render("Attack Range: " + str(chara.atk_range), True, Color.BLACK)
+        atk_cd_text = font.render("Attack Rate: 1/" + str(type(chara).attack_cd) + "fps", True, Color.BLACK)
+        atk_pt_text = font.render("Attack Point: " + str(chara.atk_point), True, Color.BLACK)
+        lvl_text = font.render("Level: " + str(chara.level), True, Color.BLACK)
+        name_text = font.render("Name: " + str(type(chara).__name__), True, Color.BLACK)
+        chara_info_pos_y = chara_info_pos_y - cancel_text.get_height() - FeedbackSystem.line_space
+        self.cancel_btn_info = [FeedbackSystem.framework_pos[0], chara_info_pos_y, cancel_text.get_width(),
+                                cancel_text.get_height()]
+        self.screen.blit(cancel_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - atk_range_text.get_height() - FeedbackSystem.line_space
+        self.screen.blit(atk_range_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - atk_cd_text.get_height() - FeedbackSystem.line_space
+        self.screen.blit(atk_cd_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - atk_pt_text.get_height() - FeedbackSystem.line_space
+        self.screen.blit(atk_pt_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - lvl_text.get_height() - FeedbackSystem.line_space
+        self.screen.blit(lvl_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - name_text.get_height() - FeedbackSystem.line_space
+        self.screen.blit(name_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
+
+    def init_buttons(self):
+        self.next_y_pos = self.next_y_pos + 10
+
+        start_text = font.render("Start", True, Color.BLACK)
+        start_btn = Button((self.next_x_pos, self.next_y_pos),
+                           (start_text.get_width(), start_text.get_height()), start_text)
+        self.next_x_pos = self.next_x_pos + start_text.get_width() + FeedbackSystem.section_space
+
+        pause_text = font.render("Pause", True, Color.BLACK)
+        pause_btn = Button((self.next_x_pos, self.next_y_pos),
+                           (pause_text.get_width(), pause_text.get_height()), pause_text)
+        self.next_x_pos = self.next_x_pos + pause_text.get_width() + FeedbackSystem.section_space
+
+        quit_text = font.render("Quit", True, Color.BLACK)
+        quit_btn = Button((self.next_x_pos, self.next_y_pos),
+                          (quit_text.get_width(), quit_text.get_height()), quit_text)
+        self.next_y_pos = self.next_y_pos + quit_text.get_height() + FeedbackSystem.section_space
+
+        self.next_x_pos = FeedbackSystem.framework_pos[0]
+        self.buttons.add(start_btn)
+        self.buttons.add(pause_btn)
+        self.buttons.add(quit_btn)
+
     def init_chara_icons(self):
+        # Display characters that are listed in array of character image file
         for img_idx, img_file in enumerate(Character.img_files):
             x = self.next_x_pos
             y = self.next_y_pos
-            chara_icon = icon(img_file, img_idx, x, y, Character.size)
-            #chara_icon = icon("../../" + img_file, x, y, character.size)
-            self.next_x_pos = self.next_x_pos + feedback_system.icon_size
-            if (self.next_x_pos >= feedback_system.framework_pos[0] + feedback_system.framework_size[0]):
-                self.next_x_pos = feedback_system.framework_pos[0]
-                self.next_y_pos = self.next_y_pos + feedback_system.icon_size
+            chara_icon = Icon(img_file, img_idx, x, y, Character.size)
+            self.next_x_pos = self.next_x_pos + FeedbackSystem.icon_size
+            if self.next_x_pos >= FeedbackSystem.framework_pos[0] + FeedbackSystem.framework_size[0]:
+                self.next_x_pos = FeedbackSystem.framework_pos[0]
+                self.next_y_pos = self.next_y_pos + FeedbackSystem.icon_size
             self.chara_icons.add(chara_icon)
             self.icon_list.append(chara_icon)
+
+    # Check if a character is selected, if so render that character information
+    def show_chara_info(self):
+        if self.clicked_chara:
+            self.chara_info_text(self.clicked_chara)
 
     def draw_icons(self):
         self.chara_icons.draw(self.screen)
 
-    def draw_text(self):
-        pygame.font.init()
-        self.next_y_pos = feedback_system.framework_pos[1]
-        font = pygame.font.SysFont("serif", 15)
-        budget_txt = font.render("Budget: " + str(self.budget), True, BLACK)
-        name_txt = font.render("Name: " + str(self.player_name), True, BLACK)
-        lvl_txt = font.render("Game Level: " + str(self.game_lvl), True, BLACK)
-        health_txt = font.render("Health: " + str(self.health), True, BLACK)
-        self.screen.blit(name_txt, [feedback_system.framework_pos[0], self.next_y_pos])
-        self.next_y_pos = self.next_y_pos + name_txt.get_height()
-        self.screen.blit(budget_txt, [feedback_system.framework_pos[0], self.next_y_pos])
-        self.next_y_pos = self.next_y_pos + budget_txt.get_height()
-        self.screen.blit(lvl_txt, [feedback_system.framework_pos[0], self.next_y_pos])
-        self.next_y_pos = self.next_y_pos + lvl_txt.get_height()
-        self.screen.blit(health_txt, [feedback_system.framework_pos[0], self.next_y_pos])
-        self.next_y_pos = self.next_y_pos + health_txt.get_height()
 
+    def draw_player_info(self):
+        self.next_y_pos = FeedbackSystem.framework_pos[1]
+        budget_txt = font.render("Budget: " + str(self.budget), True, Color.BLACK)
+        name_txt = font.render("Name: " + str(self.player_name), True, Color.BLACK)
+        lvl_txt = font.render("Game Level: " + str(self.game_lvl), True, Color.BLACK)
+        health_txt = font.render("Health: " + str(self.health), True, Color.BLACK)
+        self.screen.blit(name_txt, [FeedbackSystem.framework_pos[0], self.next_y_pos])
+        self.next_y_pos = self.next_y_pos + name_txt.get_height() + FeedbackSystem.line_space
+        self.screen.blit(budget_txt, [FeedbackSystem.framework_pos[0], self.next_y_pos])
+        self.next_y_pos = self.next_y_pos + budget_txt.get_height() + FeedbackSystem.line_space
+        self.screen.blit(lvl_txt, [FeedbackSystem.framework_pos[0], self.next_y_pos])
+        self.next_y_pos = self.next_y_pos + lvl_txt.get_height() + FeedbackSystem.line_space
+        self.screen.blit(health_txt, [FeedbackSystem.framework_pos[0], self.next_y_pos])
+        self.next_y_pos = self.next_y_pos + health_txt.get_height() + FeedbackSystem.line_space
+
+    def draw_buttons(self):
+        self.buttons.draw(self.screen)
+
+    # Check if any character in the character display is selected
     def click_icon(self, mouse_pos):
         character_idx = None
         for chara_icon in self.icon_list:
             character_idx = chara_icon.on_click(mouse_pos)
-
         if character_idx is not None:
-            print(character_idx, feedback_system.icon_characters[character_idx])
-            return feedback_system.icon_characters[character_idx]
+            print(character_idx, FeedbackSystem.icon_characters[character_idx])
+            return FeedbackSystem.icon_characters[character_idx]
         else:
             return None
 
-# pygame.init()
-# clock = pygame.time.Clock()
-# done = False
-# screen = pygame.display.set_mode([700, 500])
-# testPlayer = player("Testing")
-# testGroup = pygame.sprite.Group()
-# test = feedback_system(screen, testPlayer)
-# testGroup.add(test)
-# while not done:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             done = True
-#
-#     screen.fill((255, 255, 255))
-#     testGroup.draw(screen)
-#     test.draw_text()
-#     test.draw_icons()
-#     pygame.display.flip()
-#     clock.tick(60)
+    # Check if any button being render is clicked
+    def click_button(self, mouse_pos):
+        print(len(self.buttons))
+        for btn_idx, button in enumerate(self.buttons):
+            if button.click(mouse_pos):
+                print(btn_idx, True)
+                return btn_idx, True
+        return -1, False
+
+    # Check if the release button is being clicked.
+    def click_release(self, mouse_pos):
+        if self.clicked_chara is not None:
+            x_range = self.cancel_btn_info[0] + self.cancel_btn_info[2]
+            y_range = self.cancel_btn_info[1] + self.cancel_btn_info[3]
+            if (mouse_pos[0] >= self.cancel_btn_info[0] and mouse_pos[0] <= x_range) and (
+                    mouse_pos[1] >= self.cancel_btn_info[1] and mouse_pos[1] <= y_range):
+                return True
+            else:
+                return False
+        else:
+            return False
