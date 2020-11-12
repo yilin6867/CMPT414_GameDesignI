@@ -5,14 +5,14 @@ from DataModel.GameCourse.GameCourse import GameCourse
 
 class Goblin(Entity):
     size = (50, 50)
-    img_file = "icons/characters/goblin.png"
+    img_file = "Ext/characters/goblin.png"
 
-    def __init__(self, pos):
-        super().__init__(pos, Goblin.size, Goblin.img_file)
-        self.speed = 5
-        self.health = 5
+    def __init__(self, pos, img_file, level):
+        super().__init__(pos, Goblin.size, img_file)
+        self.speed = 15
+        self.health = 5 * level
         self.defense = 0
-        self.reward = 5
+        self.reward = 0.01
         self.point_to_move = GameCourse.move_points.copy()
 
     def update(self):

@@ -1,5 +1,6 @@
 import pygame
 from DataModel.GameCourse.Road import Road
+from DataModel.Entity.Characters.Character import Character
 
 class GameCourse:
     pos = (0, 0)
@@ -39,10 +40,9 @@ class GameCourse:
     def render(self):
         self.roads.draw(self.screen)
 
-    def occupy(self, mouse_pos):
-        for road in GameCourse.roadsDef:
-            if (mouse_pos[0] > road[0] and mouse_pos[0] < road[0] + road[2]) \
-                    and (mouse_pos[1] > road[1] and mouse_pos[1] < road[1] + road[3]):
-                print("occupied")
-                return True
+    def occupy(self, new_chara):
+        for road in self.roads:
+            is_collided = pygame.sprite.collide_rect(new_chara, road)
+            if (is_collided):
+                return is_collided
         return False

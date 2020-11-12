@@ -26,10 +26,7 @@ During the game, the player can press the pause button in the side navigator to 
 During the game, the player can press the quit button in the side navigator to quit the game.
 The windows X (exit) button will not exit the game. It is temparily a restart button.
 
-### Bugs to fix ###
-Prevent the character being place overlapping into the road
-Fix the logic of how the Globlin move so it would not seem as it move slightly towards left in the road
-
-### Features plan to Add or Complete ###
-Add more characters and goblins into the game
-Allow the character to self upgrade based on the number of goblin it defeat.
+### Issues to Fix ###
+Improve the game levels and the logic to spawn goblins
+Add pause between each game level
+Improve feedback system display for the characters, the player, and the buttons

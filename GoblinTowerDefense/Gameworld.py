@@ -11,7 +11,11 @@ The goal of the game is to prevent any goblin from approaching the end of the co
 Please install pygame through
 `pip install pygame`
 
-###Howe to Play###
+###How to Start###
+Please run Gameworld.py to start the game. Execute `python Gameworld.py` at the root directory of GoblinDefense to start
+the game.
+
+###How to Play###
 Player can use mouse to select characters from the side navigator on the right to build defenses against approaching
    goblin.
 Please press an hold down the mouse to the select character and drag it to desire location.
@@ -31,13 +35,9 @@ Player can press the pause button again to resume the game
 During the game, the player can press the quit button in the side navigator to quit the game.
 The windows X (exit) button will not exit the game. It is temporarily a restart button.
 
-### Bugs to fix ###
-Prevent the character being place overlapping into the road
-Fix the logic of how the Goblin move so it would not seem as it move slightly towards left in the road
-
-### Features plan to Add or Complete ###
-Add more characters and goblins into the game
-Allow the character to self upgrade based on the number of goblin it defeat.
+### Issues to Fix ###
+Improve the game levels and the logic to spawn goblins
+Improve feedback system display for the characters, the player, and the buttons
 
 """
 
@@ -47,6 +47,9 @@ from DataModel.Color import Color
 from DataModel.GameCourse.GameCourse import GameCourse
 from DataModel.Entity.Characters.AtkRangeBlk import AtkRangeBlk
 from DataModel.Entity.Goblins.Goblin import Goblin
+from DataModel.Entity.Goblins.Hobgoblin import Hobgoblin
+from DataModel.Entity.Goblins.GoblinShaman import GoblinShaman
+from DataModel.Entity.Goblins.GoblinLord import GoblinLord
 from DataModel.FeedbackSystem.FeedbackSystem import FeedbackSystem
 from DataModel.Player.Player import Player
 
@@ -55,8 +58,9 @@ from DataModel.Player.Player import Player
 pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont("serif", 15)
-pygame.display.set_caption("Golbin Tower Defense")
-
+pygame.display.set_caption("Goblin Tower Defense")
+bgm_file = "Ext/sound/GoblinSlayerBgm.mp3"
+pygame.mixer.init()
 
 class Gameworld:
     SCREEN_WIDTH = 700
@@ -66,7 +70,7 @@ class Gameworld:
     def __init__(self):
         self.screen = pygame.display.set_mode([Gameworld.SCREEN_WIDTH, Gameworld.SCREEN_HEIGHT])
         self.course = GameCourse(self.screen)
-        self.player = Player("Test")
+        self.player = Player("YI LIN")
         self.feedback_system_group = pygame.sprite.Group()
         self.feedback_system = FeedbackSystem(self.screen, self.player)
         self.feedback_system_group.add(self.feedback_system)
@@ -77,17 +81,23 @@ class Gameworld:
         self.select_atk_rge = pygame.sprite.Group()
         self.atk_group = pygame.sprite.Group()
         self.poten_new_char = None
+        self.character_class = None
         self.poten_atk_range = None
         self.goblin_group = pygame.sprite.Group()
-        self.goblin_cd = 5
+        self.goblin_cd = 0
+        self.goblinshaman_cd = 8
+        self.hobgoblin_cd = 10
+        self.goblinlord_cd = 15
         self.game_over_text = font.render("The game is over. Right click to restart the game and Left click " +
                                           "to end the game", True, Color.BLACK)
         self.game_over = False
 
         self.start = False
         self.pause = False
+        self.mute = False
 
     def restart(self):
+        self.stop_bgm()
         self.__init__()
 
     def run(self):
@@ -101,31 +111,64 @@ class Gameworld:
 
             pygame.display.flip()
 
-            # Limit to 60 frames per second
-            self.fps.tick(60)
+            # Limit to 20 frames per second
+            self.fps.tick(20)
 
     def game_logic(self):
+        # check if player is able to continue to play and if the game is pause
         if self.player.health > 0 and not self.pause:
             if self.start:
+                self.start = self.player.update()
+                # Spawn new goblin
                 if self.goblin_cd <= 0:
-                    end_range = 100 - self.player.game_lvl if self.player.game_lvl < 99 else 2
+                    end_range = 18 - self.player.game_lvl if self.player.game_lvl < 16 else 2
                     self.goblin_cd = random.randrange(1, end_range)
-                    self.add_goblin()
-                else:
-                    self.goblin_cd = self.goblin_cd - 1
+                    self.add_goblin("")
+                if self.goblinshaman_cd <= 0:
+                    end_range = 35 - self.player.game_lvl if self.player.game_lvl < 32 else 3
+                    self.goblinshaman_cd = random.randrange(1, end_range)
+                    self.add_goblin("shaman")
+                if self.hobgoblin_cd <= 0:
+                    end_range = 52 - self.player.game_lvl if self.player.game_lvl < 48 else 4
+                    self.hobgoblin_cd = random.randrange(1, end_range)
+                    self.add_goblin("hob")
+                if self.goblinlord_cd <= 0:
+                    end_range = 69 - self.player.game_lvl if self.player.game_lvl < 64 else 5
+                    self.goblinlord_cd = random.randrange(1, end_range)
+                    self.add_goblin("lord")
 
+                self.goblin_cd = self.goblin_cd - 1
+                self.goblinlord_cd = self.goblinlord_cd - 1
+                self.hobgoblin_cd = self.hobgoblin_cd - 1
+                self.goblinshaman_cd = self.goblinshaman_cd -1
+
+            # Handle the goblin when it reach to the end of the course
             for goblin in self.goblin_group:
                 if len(goblin.point_to_move) == 0:
                     self.player.health = self.player.health - 1
                     self.goblin_group.remove(goblin)
 
+            # Hightlight start button gray (allow new click) if there is existing goblin
+            if not self.goblin_group:
+                start_btn = self.feedback_system.btn_array[0]
+                start_btn.image.fill(Color.GRAY)
+                start_btn.image.blit(start_btn.render_text, [0, 0])
+            else:
+                start_btn = self.feedback_system.btn_array[0]
+                start_btn.image.fill(Color.RED)
+                start_btn.image.blit(start_btn.render_text, [0, 0])
+
+            # Collision Dectection on hired characters' attack range and goblin to initiate attack
             for atk_range in self.atk_range_group:
                 for goblin in self.goblin_group:
                     if pygame.sprite.collide_circle(atk_range, goblin):
                         atk_blk = atk_range.src_chara.attack(goblin)
                         if atk_blk is not None:
+                            if self.mute is not True:
+                                atk_blk.shot_sound()
                             self.atk_group.add(atk_blk)
 
+            # Handle attack block being initiated
             for atk_blk in self.atk_group:
                 if atk_blk.landed:
                     self.atk_group.remove(atk_blk)
@@ -133,20 +176,30 @@ class Gameworld:
                     hitted_goblins = pygame.sprite.spritecollide(atk_blk, self.goblin_group, False)
                     if len(hitted_goblins) > 0:
                         self.atk_group.remove(atk_blk)
-                    for hit_goblin in hitted_goblins:
+                        hit_goblin = hitted_goblins[0]
                         hit_goblin.health = hit_goblin.health - atk_blk.damage
                         if hit_goblin.health <= 0:
                             self.player.budget = self.player.budget + hit_goblin.reward
                             self.player.defeat_num = self.player.defeat_num + 1
                             self.goblin_group.remove(hit_goblin)
-
-            self.player.update()
-            self.chara_group.update()
+                            atk_blk.source.upgrade_cost = atk_blk.source.upgrade_cost - 1
+                        else:
+                            if atk_blk.effect == "slow":
+                                hit_goblin.speed = hit_goblin.speed - 1 if hit_goblin.speed > 3 else 3
             self.atk_group.update()
             self.goblin_group.update()
-            self.feedback_system_group.update()
         elif self.player.health <= 0:
             self.game_over = True
+            self.stop_bgm()
+
+        # Handle mute logic
+        if self.mute:
+            pygame.mixer.music.pause()
+        else:
+            pygame.mixer.music.unpause()
+
+        self.chara_group.update()
+        self.feedback_system_group.update()
 
     def handle_user_input(self):
         for event in pygame.event.get():
@@ -171,15 +224,26 @@ class Gameworld:
             # check if the player clicked on element in the feedback system on the right
             elif mouse_pos[0] > FeedbackSystem.framework_pos[0]:
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.character_class = None
                     # Check if any button is clicked
                     button_click = self.feedback_system.click_button(mouse_pos)
+                    # Handle Button Click
                     if button_click[0] == 0 and button_click[1] is True:
-                        self.start = True
+                        # Handle start button click
+                        if not self.start and not self.goblin_group:
+                            self.start = True
+                            self.play_bgm()
+                            self.add_goblin("")
                     elif button_click[0] == 1 and button_click[1] is True:
+                        # Handle pause button click
                         self.pause = False if self.pause else True
                     elif button_click[0] == 2 and button_click[1] is True:
+                        # Handle quit button click
                         self.done = True
                         self.game_over = True
+                    elif button_click[0] == 3 and button_click[1] is True:
+                        # Handle mute button click
+                        self.mute = False if self.mute else True
 
                     # Check if a selected character is to be release
                     release_click = self.feedback_system.click_release(mouse_pos)
@@ -187,14 +251,14 @@ class Gameworld:
                         self.select_atk_rge.empty()
                         self.atk_range_group.remove(self.feedback_system.clicked_chara.atk_range_blk)
                         self.chara_group.remove(self.feedback_system.clicked_chara)
-                        incr_amt = self.feedback_system.clicked_chara.init_upgrade_cost // 2
+                        incr_amt = self.feedback_system.clicked_chara.get_upgrade_cost() / 2
                         self.player.budget = self.player.budget + incr_amt
                         self.feedback_system.clicked_chara = None
 
                     # Check if a new character is being hired
-                    character_class = self.feedback_system.click_icon(mouse_pos)
-                    if character_class is not None:
-                        self.poten_new_char = character_class(self.screen)
+                    self.character_class = self.feedback_system.click_icon(mouse_pos)
+                    if self.character_class is not None and self.player.budget >= self.character_class.init_upgrade_cost:
+                        self.poten_new_char = self.character_class(self.screen)
                         self.poten_atk_range = AtkRangeBlk(self.screen, Color.BLACK_TRANS,
                                                            pygame.mouse.get_pos(), self.poten_new_char)
                         self.chara_group.add(self.poten_atk_range)
@@ -213,8 +277,13 @@ class Gameworld:
                     if event.type == pygame.MOUSEBUTTONUP:
                         self.chara_group.remove(self.poten_new_char)
                         self.chara_group.remove(self.poten_atk_range)
-                        if not self.course.occupy(mouse_pos) \
-                                and not pygame.sprite.spritecollide(self.poten_new_char, self.chara_group, False):
+                        chara_collid = False
+                        for chara in self.chara_group:
+                            chara_collid = pygame.sprite.collide_circle(self.poten_new_char, chara)
+                            if (chara_collid):
+                                break
+                        if not self.course.occupy(self.poten_new_char) \
+                                and not chara_collid:
                             self.chara_group.remove(self.poten_atk_range)
                             self.poten_new_char.atk_range_blk = self.poten_atk_range
                             self.poten_new_char.draggable = False
@@ -226,7 +295,7 @@ class Gameworld:
                 # Render the attack range of hired character being select
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.feedback_system.clicked_chara = None
-                    clicked_chara = None
+                    self.character_class = None
                     for chara in self.chara_group:
                         clicked_chara = chara.clicked(mouse_pos)
                         if clicked_chara is not None:
@@ -250,6 +319,8 @@ class Gameworld:
             self.feedback_system.draw_player_info()
             self.feedback_system.draw_buttons()
             self.feedback_system.draw_icons()
+            if self.character_class is not None:
+                self.feedback_system.show_avail_chara_info(self.character_class)
             self.feedback_system.show_chara_info()
         else:
             # Check the restart frame
@@ -264,9 +335,23 @@ class Gameworld:
                               ])
             self.screen.blit(self.game_over_text, [text_box_x, text_box_y])
 
-    def add_goblin(self):
-        self.goblin_group.add(Goblin(Gameworld.start_pos))
+    def add_goblin(self, goblin_type):
+        if goblin_type == "hob":
+            self.goblin_group.add(Hobgoblin(Gameworld.start_pos, Hobgoblin.img_file, self.player.game_lvl))
+        elif goblin_type == "shaman":
+            self.goblin_group.add(GoblinShaman(Gameworld.start_pos, GoblinShaman.img_file, self.player.game_lvl))
+        elif goblin_type == "lord":
+            self.goblin_group.add(GoblinLord(Gameworld.start_pos, GoblinLord.img_file, self.player.game_lvl))
+        else:
+            self.goblin_group.add(Goblin(Gameworld.start_pos, Goblin.img_file, self.player.game_lvl))
 
+    def play_bgm(self):
+        pygame.mixer.music.load(bgm_file)
+        pygame.mixer.music.set_volume(0.05)
+        pygame.mixer.music.play(-1)
+
+    def stop_bgm(self):
+        pygame.mixer.music.stop()
 
 if __name__ == "__main__":
     world = Gameworld()

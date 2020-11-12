@@ -1,5 +1,4 @@
-import math
-
+from DataModel.Color import Color
 
 class Player:
     pid = 1
@@ -7,7 +6,7 @@ class Player:
     def __init__(self, name):
         self.pid = Player.pid
         self.name = name
-        self.budget = 1000
+        self.budget = 5
         self.game_lvl = 1
         self.hired_chara = []
         self.health = 4
@@ -18,4 +17,7 @@ class Player:
     def update(self):
         if self.defeat_num >= self.lvl_up_defeat:
             self.game_lvl = self.game_lvl + 1
-            self.lvl_up_defeat = 2**self.game_lvl + 1
+            self.lvl_up_defeat = 2**self.game_lvl * 10
+            return False
+        else:
+            return True
