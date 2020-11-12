@@ -1,23 +1,20 @@
 import pygame
+import pygame.gfxdraw
 
 from DataModel.Entity.Entity import Entity
 
-class atk_range_blk(Entity):
+
+class AtkRangeBlk(Entity):
     def __init__(self, scrn, color, pos, chara):
-        super().__init__(pos, chara.atkRange*2, "")
+        super().__init__(pos, chara.atk_range * 2, "")
         self.screen = scrn
         self.src_chara = chara
-        self.radius = chara.atkRange
-        self.pos = pygame.math.Vector2(pos[0], pos[1])
-        self.image = pygame.Surface((self.radius * 2, self.radius * 2))
-        self.image.set_alpha(128)
-        self.rect = self.image.get_rect(center=self.pos)
-        self.image.fill((255, 255, 255))
+        self.radius = chara.atk_range
+        self.pos = pygame.math.Vector2()
+        self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
         pygame.draw.circle(self.image, color, (self.radius, self.radius), self.radius)
-        self.vel = pygame.math.Vector2(0, 0)
-        self.accel = pygame.math.Vector2(0, 0)
-        self.dead = False
-
+        self.rect = self.image.get_rect(center=self.pos)
+        self.image.set_alpha(128)
 
     def update(self):
         mouse_coords = pygame.mouse.get_pos()

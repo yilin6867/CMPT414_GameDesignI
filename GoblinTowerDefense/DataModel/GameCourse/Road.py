@@ -6,7 +6,6 @@ class Road(pygame.sprite.Sprite):
         super().__init__()
 
         # Fetch the rectangle object that has the dimensions of the image
-        # image.
         self.image = pygame.Surface((coords[2], coords[3]))
         self.image.fill(color)
         self.rect = self.image.get_rect()

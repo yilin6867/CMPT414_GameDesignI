@@ -1,15 +1,13 @@
 import pygame
 from DataModel.GameCourse.Road import Road
-
-
-# ----- Declare colors
-
+from DataModel.Entity.Characters.Character import Character
 
 class GameCourse:
     pos = (0, 0)
     size = (700, 500)
     road_width = 60
     roadsDef = (
+        # (x, y, width, height)
         (500, 0, road_width, 100),  # road block 0
         (390, 100, 170, road_width),  # road block 1
         (330, 0, road_width, 160),  # road block 2
@@ -41,3 +39,10 @@ class GameCourse:
 
     def render(self):
         self.roads.draw(self.screen)
+
+    def occupy(self, new_chara):
+        for road in self.roads:
+            is_collided = pygame.sprite.collide_rect(new_chara, road)
+            if (is_collided):
+                return is_collided
+        return False
