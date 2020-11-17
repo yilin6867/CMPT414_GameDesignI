@@ -77,7 +77,7 @@ snake_segments = []
 snake_angle = 90
 snake_head = "snakehead.png"
 # https://www.clipartmax.com/max/m2i8N4K9H7A0K9G6/
-snake_tail = "snaketail - Copy.png"
+snake_tail = "snaketail.png"
 # https://flyclipart.com/snake-tail-rattle-rattle-clipart-220323
 
 for i in range(15):
