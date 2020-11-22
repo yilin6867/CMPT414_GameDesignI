@@ -1,5 +1,3 @@
-from DataModel.Color import Color
-
 class Player:
     pid = 1
 

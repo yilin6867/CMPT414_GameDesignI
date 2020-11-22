@@ -17,8 +17,10 @@ class Button(Entity):
         self.on = False
 
     def click(self, click_pos):
-        if ((click_pos[0] > self.rect.x) and (click_pos[0] < self.rect.x + self.size[0])) and (
-                (click_pos[1] > self.rect.y) and (click_pos[1] < self.rect.y + self.size[1])):
+        if ((click_pos[0] > self.rect.x) and
+            (click_pos[0] < self.rect.x + self.size[0])) and (
+                (click_pos[1] > self.rect.y) and
+                (click_pos[1] < self.rect.y + self.size[1])):
             self.image.fill(Color.GRAY if self.on else Color.RED)
             self.image.blit(self.render_text, [0, 0])
             self.on = False if self.on else True

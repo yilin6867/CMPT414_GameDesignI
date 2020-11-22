@@ -13,8 +13,10 @@ class Icon(pygame.sprite.Sprite):
         self.img_idx = img_idx
 
     def on_click(self, click_pos):
-        if ((click_pos[0] > self.rect.x) and (click_pos[0] < self.rect.x + self.size[0])) and (
-                (click_pos[1] > self.rect.y) and (click_pos[1] < self.rect.y + self.size[1])):
+        if ((click_pos[0] > self.rect.x) and
+            (click_pos[0] < self.rect.x + self.size[0])) and (
+                (click_pos[1] > self.rect.y) and
+                (click_pos[1] < self.rect.y + self.size[1])):
             return self.img_idx
         else:
             return None

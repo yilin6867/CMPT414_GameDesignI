@@ -59,23 +59,31 @@ class FeedbackSystem(pygame.sprite.Sprite):
 
         start_text = font.render("Start", True, Color.BLACK)
         start_btn = Button((self.next_x_pos, self.next_y_pos),
-                           (start_text.get_width(), start_text.get_height()), start_text)
-        self.next_x_pos = self.next_x_pos + start_text.get_width() + FeedbackSystem.section_space
+                           (start_text.get_width(), start_text.get_height()),
+                           start_text)
+        self.next_x_pos = self.next_x_pos + start_text.get_width() + \
+            FeedbackSystem.section_space
 
         pause_text = font.render("Pause", True, Color.BLACK)
         pause_btn = Button((self.next_x_pos, self.next_y_pos),
-                           (pause_text.get_width(), pause_text.get_height()), pause_text)
-        self.next_x_pos = self.next_x_pos + pause_text.get_width() + FeedbackSystem.section_space
+                           (pause_text.get_width(), pause_text.get_height()),
+                           pause_text)
+        self.next_x_pos = self.next_x_pos + pause_text.get_width() +\
+            FeedbackSystem.section_space
 
         quit_text = font.render("Quit", True, Color.BLACK)
         quit_btn = Button((self.next_x_pos, self.next_y_pos),
-                          (quit_text.get_width(), quit_text.get_height()), quit_text)
-        self.next_y_pos = self.next_y_pos + quit_text.get_height() + FeedbackSystem.section_space
+                          (quit_text.get_width(), quit_text.get_height()),
+                          quit_text)
+        self.next_y_pos = self.next_y_pos + quit_text.get_height() + \
+            FeedbackSystem.section_space
         self.next_x_pos = FeedbackSystem.framework_pos[0] + 5
         mute_text = font.render("Mute", True, Color.BLACK)
         mute_btn = Button((self.next_x_pos, self.next_y_pos),
-                          (mute_text.get_width(), mute_text.get_height()), mute_text)
-        self.next_y_pos = self.next_y_pos + quit_text.get_height() + FeedbackSystem.section_space
+                          (mute_text.get_width(), mute_text.get_height()),
+                          mute_text)
+        self.next_y_pos = self.next_y_pos + quit_text.get_height() +\
+            FeedbackSystem.section_space
         self.buttons.add(start_btn)
         self.buttons.add(pause_btn)
         self.buttons.add(quit_btn)
@@ -89,7 +97,9 @@ class FeedbackSystem(pygame.sprite.Sprite):
             y = self.next_y_pos
             chara_icon = Icon(img_file, img_idx, x, y, Character.size)
             self.next_x_pos = self.next_x_pos + FeedbackSystem.icon_size
-            if self.next_x_pos >= FeedbackSystem.framework_pos[0] + FeedbackSystem.framework_size[0]:
+            if self.next_x_pos >= \
+                    (FeedbackSystem.framework_pos[0] +
+                        FeedbackSystem.framework_size[0]):
                 self.next_x_pos = FeedbackSystem.framework_pos[0] + 5
                 self.next_y_pos = self.next_y_pos + FeedbackSystem.icon_size
             self.chara_icons.add(chara_icon)
@@ -103,22 +113,29 @@ class FeedbackSystem(pygame.sprite.Sprite):
     def draw_icons(self):
         self.chara_icons.draw(self.screen)
 
-
     def draw_player_info(self):
         self.next_y_pos = FeedbackSystem.framework_pos[1]
         x_corrd = FeedbackSystem.framework_pos[0] + 5
-        budget_txt = font.render("Budget: " + str(round(self.budget, 2)), True, Color.BLACK)
-        name_txt = font.render("Name: " + str(self.player_name), True, Color.BLACK)
-        lvl_txt = font.render("Game Level: " + str(self.game_lvl), True, Color.BLACK)
-        health_txt = font.render("Health: " + str(self.health), True, Color.BLACK)
+        budget_txt = font.render("Budget: " + str(round(self.budget, 2)), True,
+                                 Color.BLACK)
+        name_txt = font.render("Name: " + str(self.player_name), True,
+                               Color.BLACK)
+        lvl_txt = font.render("Game Level: " + str(self.game_lvl), True,
+                              Color.BLACK)
+        health_txt = font.render("Health: " + str(self.health), True,
+                                 Color.BLACK)
         self.screen.blit(name_txt, [x_corrd, self.next_y_pos])
-        self.next_y_pos = self.next_y_pos + name_txt.get_height() + FeedbackSystem.line_space
+        self.next_y_pos = self.next_y_pos + name_txt.get_height() +\
+            FeedbackSystem.line_space
         self.screen.blit(budget_txt, [x_corrd, self.next_y_pos])
-        self.next_y_pos = self.next_y_pos + budget_txt.get_height() + FeedbackSystem.line_space
+        self.next_y_pos = self.next_y_pos + budget_txt.get_height() +\
+            FeedbackSystem.line_space
         self.screen.blit(lvl_txt, [x_corrd, self.next_y_pos])
-        self.next_y_pos = self.next_y_pos + lvl_txt.get_height() + FeedbackSystem.line_space
+        self.next_y_pos = self.next_y_pos + lvl_txt.get_height() +\
+            FeedbackSystem.line_space
         self.screen.blit(health_txt, [x_corrd, self.next_y_pos])
-        self.next_y_pos = self.next_y_pos + health_txt.get_height() + FeedbackSystem.line_space
+        self.next_y_pos = self.next_y_pos + health_txt.get_height() +\
+            FeedbackSystem.line_space
 
     def draw_buttons(self):
         self.buttons.draw(self.screen)
@@ -126,49 +143,93 @@ class FeedbackSystem(pygame.sprite.Sprite):
     def chara_info_text(self, chara):
         # Render the character information if a character is being clicked
 
-        chara_info_pos_y = FeedbackSystem.framework_pos[1] + FeedbackSystem.framework_size[1]
+        chara_info_pos_y = FeedbackSystem.framework_pos[1] +\
+            FeedbackSystem.framework_size[1]
         cancel_text = font.render("Release", True, Color.RED)
-        upgrade_cost_text = font.render("Upgrade Cost: " + str(round(chara.upgrade_cost, 2)), True, Color.BLACK)
-        atk_range_text = font.render("Attack Range: " + str(chara.atk_range), True, Color.BLACK)
-        atk_cd_text = font.render("Attack Rate: 1/" + str(type(chara).attack_cd) + "fps", True, Color.BLACK)
-        atk_pt_text = font.render("Attack Point: " + str(chara.atk_point), True, Color.BLACK)
+        upgrade_cost_text = font.render("Upgrade Cost: " +
+                                        str(round(chara.upgrade_cost, 2)),
+                                        True, Color.BLACK)
+        atk_range_text = font.render("Attack Range: " + str(chara.atk_range),
+                                     True, Color.BLACK)
+        atk_cd_text = font.render("Attack Rate: 1/" +
+                                  str(type(chara).attack_cd) + "fps", True,
+                                  Color.BLACK)
+        atk_pt_text = font.render("Attack Point: " + str(chara.atk_point),
+                                  True, Color.BLACK)
         lvl_text = font.render("Level: " + str(chara.level), True, Color.BLACK)
-        name_text = font.render("Name: " + str(type(chara).__name__), True, Color.BLACK)
-        chara_info_pos_y = chara_info_pos_y - cancel_text.get_height() - FeedbackSystem.line_space
-        self.cancel_btn_info = [FeedbackSystem.framework_pos[0], chara_info_pos_y, cancel_text.get_width(),
+        name_text = font.render("Name: " + str(type(chara).__name__), True,
+                                Color.BLACK)
+        chara_info_pos_y = chara_info_pos_y - cancel_text.get_height() -\
+            FeedbackSystem.line_space
+        self.cancel_btn_info = [FeedbackSystem.framework_pos[0],
+                                chara_info_pos_y, cancel_text.get_width(),
                                 cancel_text.get_height()]
-        self.screen.blit(cancel_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
-        chara_info_pos_y = chara_info_pos_y - upgrade_cost_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(upgrade_cost_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
-        chara_info_pos_y = chara_info_pos_y - atk_range_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(atk_range_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
-        chara_info_pos_y = chara_info_pos_y - atk_cd_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(atk_cd_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
-        chara_info_pos_y = chara_info_pos_y - atk_pt_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(atk_pt_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
-        chara_info_pos_y = chara_info_pos_y - lvl_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(lvl_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
-        chara_info_pos_y = chara_info_pos_y - name_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(name_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
+        self.screen.blit(cancel_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - upgrade_cost_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(upgrade_cost_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - atk_range_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(atk_range_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - atk_cd_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(atk_cd_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - atk_pt_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(atk_pt_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - lvl_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(lvl_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - name_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(name_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
 
     def show_avail_chara_info(self, clicked_chara):
         # Render the character information if a character is being clicked
-        chara_info_pos_y = FeedbackSystem.framework_pos[1] + FeedbackSystem.framework_size[1]
-        upgrade_cost_text = font.render("Hire Cost: " + str(round(clicked_chara.init_upgrade_cost, 2)), True, Color.BLACK)
-        atk_range_text = font.render("Attack Range: " + str(clicked_chara.init_atk_range), True, Color.BLACK)
-        atk_cd_text = font.render("Attack Rate: 1/" + str(clicked_chara.attack_cd) + "fps", True, Color.BLACK)
-        atk_pt_text = font.render("Attack Point: " + str(clicked_chara.init_atk), True, Color.BLACK)
-        name_text = font.render("Name: " + str(clicked_chara.__name__), True, Color.BLACK)
-        chara_info_pos_y = chara_info_pos_y - upgrade_cost_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(upgrade_cost_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
-        chara_info_pos_y = chara_info_pos_y - atk_range_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(atk_range_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
-        chara_info_pos_y = chara_info_pos_y - atk_cd_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(atk_cd_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
-        chara_info_pos_y = chara_info_pos_y - atk_pt_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(atk_pt_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
-        chara_info_pos_y = chara_info_pos_y - name_text.get_height() - FeedbackSystem.line_space
-        self.screen.blit(name_text, [FeedbackSystem.framework_pos[0], chara_info_pos_y])
+        chara_info_pos_y = FeedbackSystem.framework_pos[1] +\
+            FeedbackSystem.framework_size[1]
+        init_cost = clicked_chara.init_upgrade_cost
+        upgrade_cost_text = font.render("Hire Cost: " +
+                                        str(round(init_cost, 2)), True,
+                                        Color.BLACK)
+        atk_range_text = font.render("Attack Range: " +
+                                     str(clicked_chara.init_atk_range), True,
+                                     Color.BLACK)
+        atk_cd_text = font.render("Attack Rate: 1/" +
+                                  str(clicked_chara.attack_cd) + "fps", True,
+                                  Color.BLACK)
+        atk_pt_text = font.render("Attack Point: " +
+                                  str(clicked_chara.init_atk), True,
+                                  Color.BLACK)
+        name_text = font.render("Name: " + str(clicked_chara.__name__), True,
+                                Color.BLACK)
+        chara_info_pos_y = chara_info_pos_y - upgrade_cost_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(upgrade_cost_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - atk_range_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(atk_range_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - atk_cd_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(atk_cd_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - atk_pt_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(atk_pt_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
+        chara_info_pos_y = chara_info_pos_y - name_text.get_height() -\
+            FeedbackSystem.line_space
+        self.screen.blit(name_text, [FeedbackSystem.framework_pos[0],
+                         chara_info_pos_y])
 
     # Check if any character in the character display is selected
     def click_icon(self, mouse_pos):
@@ -197,8 +258,10 @@ class FeedbackSystem(pygame.sprite.Sprite):
         if self.clicked_chara is not None:
             x_range = self.cancel_btn_info[0] + self.cancel_btn_info[2]
             y_range = self.cancel_btn_info[1] + self.cancel_btn_info[3]
-            if (mouse_pos[0] >= self.cancel_btn_info[0] and mouse_pos[0] <= x_range) and (
-                    mouse_pos[1] >= self.cancel_btn_info[1] and mouse_pos[1] <= y_range):
+            if (mouse_pos[0] >= self.cancel_btn_info[0] and
+                mouse_pos[0] <= x_range) and (
+                    mouse_pos[1] >= self.cancel_btn_info[1] and
+                    mouse_pos[1] <= y_range):
                 return True
             else:
                 return False

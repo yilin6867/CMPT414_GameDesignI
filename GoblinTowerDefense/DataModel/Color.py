@@ -1,5 +1,4 @@
-
-class Color():
+class Color:
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     GREEN = (90, 230, 10)

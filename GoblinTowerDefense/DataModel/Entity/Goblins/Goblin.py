@@ -25,10 +25,10 @@ class Goblin(Entity):
             next_x = self.speed * math.sin(angle)
             next_y = self.speed * math.cos(angle)
 
-            if (self.rect.x > self.point_to_move[0][0] - self.speed
-                and self.rect.x < self.point_to_move[0][0] + self.speed) and (
-                    self.rect.y > self.point_to_move[0][1] - self.speed
-                    and self.rect.y < self.point_to_move[0][1] + self.speed):
+            if (self.rect.x > self.point_to_move[0][0] - self.speed and
+                self.rect.x < self.point_to_move[0][0] + self.speed) and (
+                    self.rect.y > self.point_to_move[0][1] - self.speed and
+                    self.rect.y < self.point_to_move[0][1] + self.speed):
                 self.rect.x = self.point_to_move[0][0]
                 self.rect.y = self.point_to_move[0][1]
                 self.point_to_move.pop(0)

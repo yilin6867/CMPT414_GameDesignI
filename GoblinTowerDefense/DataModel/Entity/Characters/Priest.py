@@ -37,9 +37,11 @@ class Priest(Character):
     def attack(self, enemy):
         if self.atk_cd == 0:
             self.atk_cd = self.def_atk_cd
-            attack_coords = [self.rect.x + self.size[0] // 2, self.rect.y + self.size[1] // 2]
+            attack_coords = [self.rect.x + self.size[0] // 2,
+                             self.rect.y + self.size[1] // 2]
             effect = "slow"
-            return AttackBlock(self.screen, attack_coords, AttackBlock.size, self.atk_img_file, self.atk_point,
+            return AttackBlock(self.screen, attack_coords, AttackBlock.size,
+                               self.atk_img_file, self.atk_point,
                                self.atk_spd, False, enemy, self, effect)
         else:
             self.atk_cd = self.atk_cd - 1

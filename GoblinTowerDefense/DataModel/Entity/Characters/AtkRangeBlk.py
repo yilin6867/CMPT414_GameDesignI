@@ -11,8 +11,10 @@ class AtkRangeBlk(Entity):
         self.src_chara = chara
         self.radius = chara.atk_range
         self.pos = pygame.math.Vector2()
-        self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, color, (self.radius, self.radius), self.radius)
+        self.image = pygame.Surface((self.radius * 2, self.radius * 2),
+                                    pygame.SRCALPHA)
+        pygame.draw.circle(self.image, color, (self.radius, self.radius),
+                           self.radius)
         self.rect = self.image.get_rect(center=self.pos)
         self.image.set_alpha(128)
 

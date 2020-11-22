@@ -2,6 +2,7 @@ import pygame
 from DataModel.Entity.Characters.Character import Character
 from DataModel.Entity.Characters.AttackBlock.AttackBlock import AttackBlock
 
+
 class Archer(Character):
     init_level = 1
     init_upgrade_cost = (4 * (init_level ** 3)) / 5

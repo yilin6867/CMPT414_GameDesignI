@@ -2,6 +2,7 @@ import pygame
 from DataModel.GameCourse.Road import Road
 from DataModel.Entity.Characters.Character import Character
 
+
 class GameCourse:
     pos = (0, 0)
     size = (700, 500)
@@ -20,14 +21,22 @@ class GameCourse:
     # BLACK
     roadColor = (240, 210, 40)
     move_points = [
-        (roadsDef[0][0], (roadsDef[0][1] + roadsDef[0][3])),  # move point 0
-        (roadsDef[1][0] - road_width, (roadsDef[1][1])),  # move point 1
-        (roadsDef[2][0], roadsDef[2][1]),  # move point 2
-        (roadsDef[3][0], roadsDef[3][1]),  # move point 3
-        (roadsDef[4][0], (roadsDef[4][1] + roadsDef[4][3])),  # move point 4
-        (roadsDef[5][0] + roadsDef[5][2] - road_width, (roadsDef[5][1])),  # move point 5
-        (roadsDef[6][0], (roadsDef[6][1] + roadsDef[6][3])),  # move point 6
-        (roadsDef[7][0], (roadsDef[7][1]))  # move point 7
+        # move point 0
+        (roadsDef[0][0], (roadsDef[0][1] + roadsDef[0][3])),
+        # move point 1
+        (roadsDef[1][0] - road_width, (roadsDef[1][1])),
+        # move point 2
+        (roadsDef[2][0], roadsDef[2][1]),
+        # move point 3
+        (roadsDef[3][0], roadsDef[3][1]),
+        # move point 4
+        (roadsDef[4][0], (roadsDef[4][1] + roadsDef[4][3])),
+        # move point 5
+        (roadsDef[5][0] + roadsDef[5][2] - road_width, (roadsDef[5][1])),
+        # move point 6
+        (roadsDef[6][0], (roadsDef[6][1] + roadsDef[6][3])),
+        # move point 7
+        (roadsDef[7][0], (roadsDef[7][1]))
     ]
 
     def __init__(self, scrn):

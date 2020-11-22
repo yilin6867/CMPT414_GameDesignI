@@ -9,7 +9,7 @@ class AttackBlock(Entity):
     arrow = "Ext/attacks/arrow.png"
     arrow_sd = "Ext/sound/BOWMEN1.wav"
     holy_light = "Ext/attacks/holy_light.png"
-    holy_light_sd = "Ext/sound/Notification-Bell-C1-www.fesliyanstudios.com.wav"
+    holy_light_sd = "Ext/sound/NotificationBellC1-www.fesliyanstudios.com.wav"
     fireball = "Ext/attacks/fireball.png"
     fireball_sd = "Ext/sound/Fireball+1.wav"
     dagger_spd = 10
@@ -18,7 +18,8 @@ class AttackBlock(Entity):
     holylight_spd = 8
     size = (20, 20)
 
-    def __init__(self, scrn, pos, size, img_file, damage, spd, traceable, target, source, effect):
+    def __init__(self, scrn, pos, size, img_file, damage, spd, traceable,
+                 target, source, effect):
         super().__init__(pos, size, img_file)
         self.screen = scrn
         self.damage = damage
@@ -50,8 +51,10 @@ class AttackBlock(Entity):
         next_x = self.speed * math.sin(angle)
         next_y = self.speed * math.cos(angle)
 
-        if (self.rect.x >= target_x - self.speed +1 and self.rect.x <= target_x + self.speed-1) and (
-                self.rect.y >= target_y - self.speed +1 and self.rect.y <= target_y + self.speed-1):
+        if (self.rect.x >= target_x - self.speed + 1 and
+            self.rect.x <= target_x + self.speed-1) and (
+                self.rect.y >= target_y - self.speed + 1 and
+                self.rect.y <= target_y + self.speed-1):
             self.rect.x = target_x
             self.rect.y = target_y
             self.landed = True
@@ -79,4 +82,3 @@ class AttackBlock(Entity):
             sound = pygame.mixer.Sound(AttackBlock.holy_light_sd)
             pygame.mixer.Channel(3).set_volume(0.05)
             pygame.mixer.Channel(3).play(sound)
-
