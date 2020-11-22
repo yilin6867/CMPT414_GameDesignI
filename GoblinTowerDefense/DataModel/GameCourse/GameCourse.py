@@ -9,14 +9,50 @@ class GameCourse:
     road_width = 60
     roadsDef = (
         # (x, y, width, height)
-        (500, 0, road_width, 100),  # road block 0
-        (390, 100, 170, road_width),  # road block 1
-        (330, 0, road_width, 160),  # road block 2
-        (60, 0, 270, road_width),  # road block 3
-        (60, 60, road_width, 180),  # road block 4
-        (60, 240, 500, road_width),  # road block 5
-        (500, 300, road_width, 120),  # road block 6
-        (0, 420, 560, road_width)  # road block 7
+        # road block 0
+        (500, 0, road_width, 50),
+        (500, 50, road_width, 50),
+        # road block 1
+        (390, 100, 60, road_width),
+        (450, 100, 60, road_width),
+        (510, 100, 50, road_width),
+        # road block 2
+        (330, 0, road_width, 50),
+        (330, 50, road_width, 50),
+        (330, 100, road_width, 60),
+        # road block 3
+        (60, 0, 55, road_width),
+        (115, 0, 55, road_width),
+        (170, 0, 55, road_width),
+        (225, 0, 55, road_width),
+        (280, 0, 55, road_width),
+        # road block 4
+        (60, 60, road_width, 60),
+        (60, 120, road_width, 60),
+        (60, 180, road_width, 60),
+        # road block 5
+        (60, 240, 60, road_width),
+        (120, 240, 60, road_width),
+        (180, 240, 60, road_width),
+        (240, 240, 60, road_width),
+        (300, 240, 60, road_width),
+        (360, 240, 60, road_width),
+        (420, 240, 60, road_width),
+        (480, 240, 80, road_width),
+        # road block 6
+        (500, 300, road_width, 60),
+        (500, 360, road_width, 60),
+        # road block 7
+        (0, 420, 60, road_width),
+        (60, 420, 60, road_width),
+        (120, 420, 60, road_width),
+        (180, 420, 60, road_width),
+        (240, 420, 60, road_width),
+        (300, 420, 60, road_width),
+        (360, 420, 60, road_width),
+        (420, 420, 60, road_width),
+        (480, 420, 60, road_width),
+        (540, 420, 20, road_width)
     )
     # BLACK
     roadColor = (240, 210, 40)
@@ -52,6 +88,6 @@ class GameCourse:
     def occupy(self, new_chara):
         for road in self.roads:
             is_collided = pygame.sprite.collide_rect(new_chara, road)
-            if (is_collided):
+            if is_collided:
                 return is_collided
         return False

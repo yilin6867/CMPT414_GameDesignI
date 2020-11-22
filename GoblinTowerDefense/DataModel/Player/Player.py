@@ -1,3 +1,6 @@
+import math
+
+
 class Player:
     pid = 1
 
@@ -8,14 +11,16 @@ class Player:
         self.game_lvl = 1
         self.hired_chara = []
         self.health = 4
-        self.defeat_num = 0
-        self.lvl_up_defeat = 2**self.game_lvl + 1
+        self.num_to_defeat = 0
+        self.lvl_up_defeat = self.game_lvl * 5
         Player.pid = Player.pid + 1
 
     def update(self):
-        if self.defeat_num >= self.lvl_up_defeat:
+        print(self.num_to_defeat, self.lvl_up_defeat)
+        if self.num_to_defeat >= self.lvl_up_defeat:
             self.game_lvl = self.game_lvl + 1
-            self.lvl_up_defeat = 2**self.game_lvl * 10
+            self.lvl_up_defeat = self.game_lvl * 5
+            self.num_to_defeat = 0
             return False
         else:
             return True

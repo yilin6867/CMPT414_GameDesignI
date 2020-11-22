@@ -74,12 +74,13 @@ pygame.mixer.init()
 class Gameworld:
     SCREEN_WIDTH = 700
     SCREEN_HEIGHT = 500
-    start_pos = ((GameCourse.roadsDef[0][0] +
+    START_POS = ((GameCourse.roadsDef[0][0] +
                   (GameCourse.roadsDef[0][2] // 2)),
                  GameCourse.roadsDef[0][1])
-    font = pygame.font.SysFont("serif", 15)
-    bgm_file = "Ext/sound/GoblinSlayerBgm.mp3"
+    FONT = pygame.font.SysFont("serif", 15)
+    BGM_FILE = "Ext/sound/GoblinSlayerBgm.mp3"
     SPLASH_IMG = "Ext/imageForSplashScreen.png"
+    BG_IMG = "Ext/tiled/gassland.png"
 
     def __init__(self):
         self.screen = pygame.display.set_mode([Gameworld.SCREEN_WIDTH,
@@ -90,6 +91,10 @@ class Gameworld:
         self.feedback_system = FeedbackSystem(self.screen, self.player)
         self.feedback_system_group.add(self.feedback_system)
         self.done = False
+        self.bg = pygame.image.load(Gameworld.BG_IMG)
+        self.bg = pygame.transform.scale(self.bg,
+                                         (Gameworld.SCREEN_WIDTH,
+                                          Gameworld.SCREEN_HEIGHT))
         self.fps = pygame.time.Clock()
         self.chara_group = pygame.sprite.Group()
         self.atk_range_group = pygame.sprite.Group()
@@ -103,10 +108,10 @@ class Gameworld:
         self.goblinshaman_cd = 8
         self.hobgoblin_cd = 10
         self.goblinlord_cd = 15
-        self.splash_txt = Gameworld.font.render("Press any Key to start the " +
+        self.splash_txt = Gameworld.FONT.render("Press any Key to start the " +
                                                 " game. Press Escape to end " +
                                                 "the game.", True, Color.BLACK)
-        self.game_over_text = Gameworld.font.render(
+        self.game_over_text = Gameworld.FONT.render(
             "The game is over. Right click to restart the game and Left" +
             " click to end the game", True, Color.BLACK)
         self.game_over = False
@@ -168,31 +173,43 @@ class Gameworld:
                 # Spawn new goblin
                 if self.goblin_cd <= 0:
                     if self.player.game_lvl < 16:
+                        start_range = 16 - self.player.game_lvl
                         end_range = 18 - self.player.game_lvl
                     else:
+                        start_range = 1
                         end_range = 2
-                    self.goblin_cd = random.randrange(1, end_range)
+                    self.goblin_cd = random.randrange(start_range, end_range)
+                    self.player.num_to_defeat = self.player.num_to_defeat + 1
                     self.add_goblin("")
                 if self.goblinshaman_cd <= 0:
                     if self.player.game_lvl < 32:
+                        start_range = 32 - self.player.game_lvl
                         end_range = 35 - self.player.game_lvl
                     else:
+                        start_range = 1
                         end_range = 3
-                    self.goblinshaman_cd = random.randrange(1, end_range)
+                    self.goblinshaman_cd = random.randrange(start_range, end_range)
+                    self.player.num_to_defeat = self.player.num_to_defeat + 1
                     self.add_goblin("shaman")
                 if self.hobgoblin_cd <= 0:
                     if self.player.game_lvl < 48:
+                        start_range = 48 - self.player.game_lvl
                         end_range = 52 - self.player.game_lvl
                     else:
+                        start_range = 1
                         end_range = 4
-                    self.hobgoblin_cd = random.randrange(1, end_range)
+                    self.hobgoblin_cd = random.randrange(start_range, end_range)
+                    self.player.num_to_defeat = self.player.num_to_defeat + 1
                     self.add_goblin("hob")
                 if self.goblinlord_cd <= 0:
                     if self.player.game_lvl < 64:
+                        start_range = 64 - self.player.game_lvl
                         end_range = 69 - self.player.game_lvl
                     else:
+                        start_range = 1
                         end_range = 5
-                    self.goblinlord_cd = random.randrange(1, end_range)
+                    self.goblinlord_cd = random.randrange(start_range, end_range)
+                    self.player.num_to_defeat = self.player.num_to_defeat + 1
                     self.add_goblin("lord")
 
                 self.goblin_cd = self.goblin_cd - 1
@@ -243,7 +260,6 @@ class Gameworld:
                         hit_goblin.health = hit_goblin.health - atk_blk.damage
                         if hit_goblin.health <= 0:
                             self.player.budget += hit_goblin.reward
-                            self.player.defeat_num = self.player.defeat_num + 1
                             self.goblin_group.remove(hit_goblin)
                             atk_blk.source.upgrade_cost -= 1
                         else:
@@ -328,9 +344,9 @@ class Gameworld:
                     # Check if a new character is being hired
                     self.character_class = self.feedback_system.click_icon(
                         mouse_pos)
-                    init_cost = self.character_class.init_upgrade_cost
                     if self.character_class is not None and \
-                            self.player.budget >= init_cost:
+                            self.player.budget >= \
+                            self.character_class.init_upgrade_cost:
                         self.poten_new_char = self.character_class(self.screen)
                         mouse_pos = pygame.mouse.get_pos()
                         self.poten_atk_range = AtkRangeBlk(self.screen,
@@ -389,7 +405,7 @@ class Gameworld:
         # Check if player is still able to play
         if self.player.health > 0:
             # Clear the screen
-            self.screen.fill(Color.GREEN)
+            self.screen.blit(self.bg, (0, 0))
             self.course.render()
             if self.feedback_system.clicked_chara:
                 self.select_atk_rge.empty()
@@ -425,20 +441,20 @@ class Gameworld:
 
     def add_goblin(self, goblin_type):
         if goblin_type == "hob":
-            self.goblin_group.add(Hobgoblin(Gameworld.start_pos,
-                                  Hobgoblin.img_file, self.player.game_lvl))
+            self.goblin_group.add(Hobgoblin(Gameworld.START_POS,
+                                            Hobgoblin.img_file, self.player.game_lvl))
         elif goblin_type == "shaman":
-            self.goblin_group.add(GoblinShaman(Gameworld.start_pos,
-                                  GoblinShaman.img_file, self.player.game_lvl))
+            self.goblin_group.add(GoblinShaman(Gameworld.START_POS,
+                                               GoblinShaman.img_file, self.player.game_lvl))
         elif goblin_type == "lord":
-            self.goblin_group.add(GoblinLord(Gameworld.start_pos,
-                                  GoblinLord.img_file, self.player.game_lvl))
+            self.goblin_group.add(GoblinLord(Gameworld.START_POS,
+                                             GoblinLord.img_file, self.player.game_lvl))
         else:
-            self.goblin_group.add(Goblin(Gameworld.start_pos,
-                                  Goblin.img_file, self.player.game_lvl))
+            self.goblin_group.add(Goblin(Gameworld.START_POS,
+                                         Goblin.img_file, self.player.game_lvl))
 
     def play_bgm(self):
-        pygame.mixer.music.load(Gameworld.bgm_file)
+        pygame.mixer.music.load(Gameworld.BGM_FILE)
         pygame.mixer.music.set_volume(0.05)
         pygame.mixer.music.play(-1)
 
